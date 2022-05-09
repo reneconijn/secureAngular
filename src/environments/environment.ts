@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  mijnEnvironmentVar: 'Mijn onveilige woord'
+  mijnEnvironmentVar: 'Mijn onveilige zin'
 };
 
 /*
