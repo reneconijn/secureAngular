@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - secureangular
+name: Build and deploy Node.js app to Azure Web App - kpd-ors-web
 
 on:
   push:
@@ -21,17 +21,25 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: npm install, build, and test
+      - name: npm install, install angular
         run: |
+          npm install -g @angular/cli
           npm install
-          npm run build --if-present
-          npm run test --if-present
+
+      - name: build
+        run: npm run build
+        env:
+          MY_SECURE_KEY: ${{ secrets.MY_SECURE_KEY }}
+
+          
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -45,7 +53,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: node-app
-
+      
+      - name: unzip artifact for deployment
+        run: unzip release.zip
+    
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -53,4 +64,4 @@ jobs:
           app-name: 'secureangular'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0903A592DEDF4997972CBAEC779BE881 }}
-          package: .
+          package: ./dist/secureweb
