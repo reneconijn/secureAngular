@@ -21,11 +21,16 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: npm install, install angular and build
+      - name: npm install, install angular
         run: |
           npm install -g @angular/cli
           npm install
-          ng build --prod
+
+      - name: build
+        run: npm run build
+        env:
+          MY_SECURE_KEY: ${{ secrets.MY_SECURE_KEY }}
+
           
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
